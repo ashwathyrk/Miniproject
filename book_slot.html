@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #ffcc99;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff6600;
+    }
+
+    form {
+      width: 300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    button {
+      background-color: #ff6600;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #cc5500;
+    }
+  </style>
+</head>
+<body>
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <div class="container mt-5">
+    <form method="POST" action="">
+      {% csrf_token %}
+
+       <div class="form-group">
+        <label for="booking_time">Booking Time:</label>
+        <input type="time" name="booking_time" required>
+      </div>
+      
+
+      <div class="form-group">
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" required>
+      </div>
+      
+     
+      <div class="form-group">
+        <label for="drying_capacity_kg">Drying Capacity (kg):</label>
+        <input type="number" name="drying_capacity_kg" required>
+      </div>
+
+      <div class="form-group">
+        <label for="booking_date">Booking Date:</label>
+        <!-- Set the default value for the date input -->
+        <input type="date" name="booking_date" required value="{{ date_parameter }}">
+      </div>
+    
+      <button type="submit">Book Slot</button>
+      {% if booking_id and payment_id %}
+      <a href="{% url 'payment' shop_id=shop.id booking_id=booking_id order_id=payment_id %}">
+        <button type="submit">Proceed to Payment</button>
+    </a>
+      {% endif %}
+      </form>
+      </div>
+
+      <script>
+        document.getElementById('payment-button').addEventListener('click', function () {
+            var shopId = '{{ shop.id }}';
+            var bookingId = '{{ booking_id }}';
+            var paymentId = '{{ payment_id }}';
+
+            var options = {
+                key: 'rzp_test_QCVPmuBwOiEzBI',
+                amount: '200.0',
+                currency: 'INR',
+                name: 'Your Shop Name',
+                description: 'Payment for Booking',
+                order_id: paymentId,
+                handler: function (response) {
+                    console.log('Payment successful:', response);
+                    // Redirect or perform other actions upon successful payment
+                },
+                prefill: {
+                    name: 'Customer Name',
+                    email: 'customer@example.com',
+                    contact: 'Customer Phone Number'
+                }
+            };
+
+            var rzp = new Razorpay(options);
+            rzp.open();
+        });
+    </script>
+</body>
+</html>

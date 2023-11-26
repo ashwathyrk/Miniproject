@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profiles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .navbar a {
+            float: right;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            background-color: #333;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            padding: 16px;
+            text-decoration: none;
+            font-size: 16px;
+            color: white;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .table {
+            display: none;
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    </style>
+    <script>
+        function showTable(tableName) {
+            const tables = document.querySelectorAll('.table');
+            tables.forEach(table => {
+                table.style.display = 'none';
+            });
+            const selectedTable = document.getElementById(tableName);
+            if (selectedTable) {
+                selectedTable.style.display = 'table';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#">Home</a>
+        <!-- Add more navigation links if needed -->
+    </div>
+
+    <h1>User Profiles</h1>
+
+    <div class="container">
+        <div class="sidebar">
+            <a href="#" onclick="showTable('userTable')">User</a>
+            <a href="#" onclick="showTable('shopTable')">Shop</a>
+            <a href="#" onclick="showTable('bookingTable')">Booking</a>
+            <a href="#" onclick="showTable('dailySlotsTable')">Daily Slots</a>
+            <a href="#" onclick="showTable('dealerTable')">Dealer</a>
+            <a href="#" onclick="showTable('dryingPriceTable')">Drying Price</a>
+            <a href="#" onclick="showTable('cardamomPricesTable')">Cardamom Prices</a>
+
+            
+        </div>
+
+        <div class="table-container">
+            <table class="table" id="userTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th>
+                        <th>Phone Number</th> {% endcomment %}
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>User</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        {% comment %} <td>{{ user.id }}</td>
+                        <td>{{ user.phonenumber }}</td> {% endcomment %}
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>
+                            {% if user.is_landowner %}
+                                Landowner
+                            {% endif %}
+                            {% if user.is_parcher %}
+                                Parcher
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <a href="{% url 'deactivate_user' user.id %}" class="btn btn-danger">Deactivate</a>
+                            {% else %}
+                                <a href="{% url 'activate_user' user.id %}" class="btn btn-success">Activate</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <table class="table" id="shopTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th> {% endcomment %}
+                        <th>Shop Name</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Image</th>
+                        <th>Opening Time</th>
+                        <th>Closing Time</th>
+                        <th>Spice Capacity</th>
+                        <th>Shop License</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shop in shops %}
+                    <tr>
+                        {% comment %} <td>{{ shop.id }}</td> {% endcomment %}
+                        <td>{{ shop.shop_name }}</td>
+                        <td>{{ shop.address }}</td>
+                        <td>{{ shop.phone_number }}</td>
+                        <td>{{ shop.shop_email }}</td>
+                        <td>
+                            <img src="{{ shop.shop_image.url }}" alt="{{ shop.shop_name }}" width="100">
+                        </td>
+                        <td>{{ shop.opening_time }}</td>
+                        <td>{{ shop.closing_time }}</td>
+                        <td>{{ shop.spice_capacity }}</td>
+                        <td>
+                            <a href="{{ shop.shop_license.url }}" target="_blank">View License</a>
+                        </td>
+                        <td>
+                            {% if shop.is_approved %}
+                                <button class="btn btn-success" disabled>Approved</button>
+                           {% else %}
+                           <form method="post" action="{% url 'approve_shop' shop.id %}">
+                               {% csrf_token %}
+                                <button class="btn btn-primary">Approve</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="{% url 'disapprove_shop' shop.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Disapprove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+            <table class="table" id="bookingTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th> {% endcomment %}
+                        <th>Shop</th>
+                        <th>Booking Date</th>
+                        <th>Booking Time</th>
+                        <th>Phone Number</th>
+                        <th>Drying Capacity (kg)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        {% comment %} <td>{{ booking.id }}</td> {% endcomment %}
+                        <td>{{ booking.shop.shop_name }}</td>
+                        <td>{{ booking.booking_date }}</td>
+                        <td>{{ booking.booking_time }}</td>
+                        <td>{{ booking.phone_number }}</td>
+                        <td>{{ booking.drying_capacity_kg }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table class="table" id="dailySlotsTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th> {% endcomment %}
+                        <th>Shop</th>
+                        <th>Date</th>
+                        <th>Available Slots</th>
+                        <th>Booked Slots</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for daily_slot in daily_slots %}
+                    <tr>
+                        {% comment %} <td>{{ daily_slot.id }}</td> {% endcomment %}
+                        <td>{{ daily_slot.shop.shop_name }}</td>
+                        <td>{{ daily_slot.date }}</td>
+                        <td>{{ daily_slot.slots_available }}</td>
+                        <td>{{ daily_slot.slots_booked }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table class="table" id="dealerTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th> {% endcomment %}
+                        <th>Dealer Shop</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Dealer License</th>
+                        <th>Is Approved</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dealer in dealers %}
+                    <tr>
+                        {% comment %} <td>{{ dealer.id }}</td> {% endcomment %}
+                        <td>{{ dealer.dealer_shop }}</td>
+                        <td>{{ dealer.dealer_address }}</td>
+                        <td>{{ dealer.dealer_phno }}</td>
+                        <td>{{ dealer.dealer_email }}</td>
+                        <td>
+                            {% if dealer.dealer_license %}
+                           <a href="{{ dealer.dealer_license.url }}" target="_blank">View License</a>
+                            {% else %}
+                            No license available
+                            {% endif %}
+                    </td>
+                        <td>
+                            {% if dealer.is_approved %}
+                                <button class="btn btn-success" disabled>Approved</button>
+                            {% else %}
+                                <button class="btn btn-warning" disabled>Not Approved</button>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if dealer.is_approved %}
+                                <form method="post" action="{% url 'disapprove_dealer' dealer.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="submit">Disapprove</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'approve_dealer' dealer.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary" type="submit">Approve</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <table class="table" id="cardamomPricesTable">
+                <thead>
+                    <tr>
+                        {% comment %} <th>ID</th> {% endcomment %}
+                        <th>Dealer</th>
+                        <th>Highest Price</th>
+                        <th>Lowest Price</th>
+                        <th>Average Price</th>
+                        <th>Update Time</th>
+                        <!-- Add more table headers if needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for price in cardamom_prices %}
+                    <tr>
+                        {% comment %} <td>{{ price.id }}</td> {% endcomment %}
+                        <td>{{ price.dealer }}</td>
+                        <td>{{ price.price_highest }}</td>
+                        <td>{{ price.price_lowest }}</td>
+                        <td>{{ price.price_average }}</td>
+                        <td>{{ price.update_time }}</td>
+                        <!-- Add more table data cells if needed -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+
+        </div>
+    </div>
+</body>
+</html>
